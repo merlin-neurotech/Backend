@@ -12,32 +12,20 @@ Clean up the code and plan out the structure of the Working Title API. Implement
 
 Once the API structure has been designed and implemented (via a real-time time-domain plotting function), implement further features using this structure such as:
   - Non-Real Time (Offline) Implementation/Functionality
-  - Transforms (PSD etc.)
-  - Real Time Frequency Domain Plotting
   - Automated Feature Extraction
   - Pre-trained Classification Models
-  - Etc.
+  - dynamic/real-time plotting in both the time and frequency domain
+  - static plotting in both time and frequency domain
+  - filtering (real-time and offline)
+  - conversion from time domain to frequency domain (power spectral density, PSD) both offline and in real time
+  - conversion from frequency domain to time domain both offline and in real-time
+  - real-time downsampling and resampling
+  - anything else I think of that is useful and not too hard to do
 
-Mike: research Multi processing/threading
+### A Haiku For Developers
 
-Shawn: Put wrapper over current script
+Take initiative
 
-Cam: Bring white board markers, research multoprocessing/threading
+Stack Overflow is your friend
 
-Mo: Figure out linux support
-
-Theo: research csv architecture
-
-Sam: Come to a meeting, research with mike Multiprocessing/threading
-
-Josh: Figure out python
-
-### For Developers
-
-Note to everyone: Usually, nobody knows what the clear next step is. Reading github code and comments is one of the best ways to proceed. Don't sit around waiting for somebody to tell you what to do, because nobody knows what to do.
-
-If you don't already understand how ble2lsl and pylsl works, that's the first step: https://github.com/mohammadrashid0917/ble2lsl/blob/master/ble2lsl/ble2lsl.py,  https://github.com/chkothe/pylsl/blob/master/pylsl/pylsl.py
-
-From there, investigate any of the other libraries/resources that are constantly being linked in the chat: looking into any of them and telling everyone else what you find will be productive.
-
-We also need people who are willing to clean up code and implement scripts as data structures and functions
+Figure it out, code!
