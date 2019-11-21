@@ -1,15 +1,16 @@
 import pyqtgraph as pg
 import numpy as np
 from PyQt5 import QtGui
+from pylsl import StreamInlet
 
-def plotTimeDomain(inlet, chunkwidth, fs=0, channels=0, timewin=50, tickfactor=5, size=(1500, 800), title=None):
+def plotTimeDomain(stream_info, chunkwidth, fs=0, channels=0, timewin=50, tickfactor=5, size=(1500, 800), title=None):
     """Plot Real-Time domain in the time domain using a scrolling plot.
 
     Accepts a pylsl StreamInlet Object and plots chunks in real-time as they are recieved
     using a scrolling pyqtgraph plot. Can plot multiple channels.
 
     Args:
-        inlet (pylsl StreamInlet): The stream inlet for the stream to be plotted
+        stream_info (pylsl StreamInfo Object): The stream info object for the stream to be plotted
         chunkwidth (int): The number of samples in each chunk when pulling chunks from the stream
         fs (int): The sampling frequency of the device. If zero function will attempt to determine 
             sampling frequency automatically
@@ -25,6 +26,11 @@ def plotTimeDomain(inlet, chunkwidth, fs=0, channels=0, timewin=50, tickfactor=5
         bool: True if window was closed and no errors were encountered. False if an error was encountered within
             the function
     """
+    #################################
+    ## Stream Inlet Creation
+    #################################
+    inlet = StreamInlet(stream_info, max_chunklen=chunkwidth, recover=True)
+    inlet.open_stream() # Stream is opened implicitely on first call of pull chunk, but opening now for clarity
 
     #################################
     ## Variable Initialization
@@ -38,10 +44,10 @@ def plotTimeDomain(inlet, chunkwidth, fs=0, channels=0, timewin=50, tickfactor=5
         return False
 
     if(fs == 0):
-        fs = inlet.info().nominal_srate() # Get sampling rate
+        fs = stream_info.nominal_srate() # Get sampling rate
 
     if(channels == 0):
-        channels = inlet.info().channel_count() # Get number of channels
+        channels = stream_info.channel_count() # Get number of channels
 
     ## Initialize Constants
     XWIN = timewin*fs # Width of X-Axis in samples
@@ -132,6 +138,9 @@ def plotTimeDomain(inlet, chunkwidth, fs=0, channels=0, timewin=50, tickfactor=5
         # Check to see if widget if has been closed, if so exit loop
         if not fig.isVisible():
             break
+    
+    # Close the stream inlet
+    inlet.close_stream()
     
     return True
 

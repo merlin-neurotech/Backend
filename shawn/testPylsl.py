@@ -17,17 +17,14 @@ dummy_streamer = ble2lsl.Dummy(muse2016) #Using a dummy for now. We need some fu
 ########################
 streams = pylsl.resolve_byprop("type", "EEG", timeout=5) #type: EEG, minimum return streams = 1, timeout after 5 seconds
 stream = streams[0]
-print(stream.channel_format())
 
 # Create stream inlet to accept stream object data
-streamIn = pylsl.StreamInlet(streams[0], max_chunklen = 12, recover = True) #Grab first stream from streams, MUSE chunk 12, drop lost stream
-streamIn.open_stream()
-plotTimeDomain(streamIn, 12, title='EEG Data')
+plotTimeDomain(stream, 12, title='EEG Data', timewin=10, channels=2)
 
-print('\nChannels: %d' % streamIn.info().channel_count())
+#print('\nChannels: %d' % stream.channel_count())
 #print('Time: %f', time.time())
 
-print('\nEEG Sample: ')
+#print('\nEEG Sample: ')
 # Sometimes pull_sample times out, also sometimes it returns different sized arrays for the samples. Not consistently getting a sample for all channels
 # while(1):
 #     x = streamIn.pull_chunk()
