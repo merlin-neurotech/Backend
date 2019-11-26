@@ -5,6 +5,7 @@ import time
 import numpy as np
 import time
 from functions import plotTimeDomain
+from StreamStaff import getStream_info
 
 ########################
 ## Create a stream
@@ -15,12 +16,18 @@ dummy_streamer = ble2lsl.Dummy(muse2016) #Using a dummy for now. We need some fu
 ########################
 ## Find (Resolve) Stream
 ########################
-streams = pylsl.resolve_byprop("type", "EEG", timeout=5) #type: EEG, minimum return streams = 1, timeout after 5 seconds
-stream = streams[0]
+#streams = pylsl.resolve_byprop("type", "EEG", timeout=5) #type: EEG, minimum return streams = 1, timeout after 5 seconds
+#stream = streams[0]
+stream_info = getStream_info(dummy_streamer)
+#sam trying his new code with your thing
+
+print("have the steam info object")
+
 
 # Create stream inlet to accept stream object data
-plotTimeDomain(stream, 12, title='EEG Data', timewin=10, channels=2)
+plotTimeDomain(stream_info, 12, title='EEG Data', timewin=10, channels=2)
 
+print("past")
 #print('\nChannels: %d' % stream.channel_count())
 #print('Time: %f', time.time())
 
