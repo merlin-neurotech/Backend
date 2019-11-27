@@ -7,6 +7,7 @@ import time
 from functions import plotTimeDomain
 from StreamStaff import getStream_info
 
+
 ########################
 ## Create a stream
 ########################
@@ -22,7 +23,6 @@ stream_info = getStream_info(dummy_streamer)
 #sam trying his new code with your thing
 
 print("have the steam info object")
-
 
 # Create stream inlet to accept stream object data
 plotTimeDomain(stream_info, 12, title='EEG Data', timewin=10, channels=2)

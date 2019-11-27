@@ -1,7 +1,7 @@
 import pyqtgraph as pg
 import numpy as np
 from PyQt5 import QtGui
-from pylsl import StreamInlet
+from pylsl import StreamInlet,resolve_byprop
 
 def plotTimeDomain(stream_info, chunkwidth, fs=0, channels=0, timewin=50, tickfactor=5, size=(1500, 800), title=None):
     """Plot Real-Time domain in the time domain using a scrolling plot.
@@ -29,6 +29,7 @@ def plotTimeDomain(stream_info, chunkwidth, fs=0, channels=0, timewin=50, tickfa
     #################################
     ## Stream Inlet Creation
     #################################
+    #stream = resolve_byprop("name",stream_info.name(),timeout= 10)
     inlet = StreamInlet(stream_info, max_chunklen=chunkwidth, recover=True)
     inlet.open_stream() # Stream is opened implicitely on first call of pull chunk, but opening now for clarity
 
