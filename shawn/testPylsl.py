@@ -4,7 +4,7 @@ import pylsl
 import time
 import numpy as np
 import time
-from functions import plotTimeDomain
+from functions import plotTimeDomain, plotFreqDomain
 
 ########################
 ## Create a stream
@@ -19,7 +19,7 @@ streams = pylsl.resolve_byprop("type", "EEG", timeout=5) #type: EEG, minimum ret
 stream = streams[0]
 
 # Create stream inlet to accept stream object data
-plotTimeDomain(stream, 12, title='EEG Data', timewin=10, channels=2)
+plotTimeDomain(stream, 12, title='EEG Data')
 
 #print('\nChannels: %d' % stream.channel_count())
 #print('Time: %f', time.time())
