@@ -17,10 +17,15 @@ dummy_streamer = ble2lsl.Dummy(muse2016) #Using a dummy for now. We need some fu
 ########################
 streams = pylsl.resolve_byprop("type", "EEG", timeout=5) #type: EEG, minimum return streams = 1, timeout after 5 seconds
 stream = streams[0]
+#stream_info = getStream_info(dummy_streamer)
+#sam trying his new code with your thing
+
+print("have the steam info object")
 
 # Create stream inlet to accept stream object data
-plotTimeDomain(stream, 12, title='EEG Data')
+plotFreqDomain(stream, 12, title='EEG Data')
 
+print("past")
 #print('\nChannels: %d' % stream.channel_count())
 #print('Time: %f', time.time())
 
