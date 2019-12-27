@@ -2,9 +2,9 @@ import ble2lsl
 from ble2lsl.devices import muse2016
 import pylsl
 
-#Note that this is not at al what the final product will look like: it's just a simple script and a demonstration of how pylsl works
+#Note that this is not at all what the final product will look like: it's just a simple script and a demonstration of how pylsl works
 
-dummy_streamer = ble2lsl.Dummy(muse2016) #Using a dummy for now. We need some fuckin Muses. Why does most of the DEV TEAM not have any muses???
+dummy_streamer = ble2lsl.Dummy(muse2016) #Using a dummy for now. We need some Muses
 print("Dummy streamer: " + str(dummy_streamer))#Prints the address of the streamer to see if it was initialized correctly
 
 pylslResolvedStreams = pylsl.resolve_streams(wait_time=2.0)
@@ -17,17 +17,19 @@ streams = [[stream.source_id(), stream.type(), stream]
 #Makes a list of lists. Each list has three elements: the ID of the device the stream is coming from,
 #the type of stream, and the StreamInfo object.
 
-for streamInfo in streams:
-    print(streamInfo)
+for stream in streams: 
+    print(stream)
+#resolve_streams returned a list of stream objects. We then expanded those stream objects
+#into lists to easily see more detail. The above for loop prints this expanded list for each stream. 
 
-for streamInfo in streams:
-    if streamInfo[1] == 'EEG':
-        EEGStreamInfo = streamInfo[2] #finds the StreamInfo object of the EEG stream
+for stream in streams:
+    if stream[1] == 'EEG':
+        EEGStreamInfo = stream[2] #finds the StreamInfo object of the EEG stream
         break
 
 print(EEGStreamInfo)
 
-streamIn = pylsl.StreamInlet(EEGStreamInfo,max_buflen = 360, max_chunklen=0,recover=True)
+streamIn = pylsl.StreamInlet(EEGStreamInfo, max_buflen = 360, max_chunklen=0,recover=True)
 print(streamIn)
 
 #Okay, now the good stuff.
