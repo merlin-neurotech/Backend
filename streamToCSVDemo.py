@@ -6,7 +6,7 @@ import pylsl
 import csv
 import os 
 
-def csvWrite(streamObj, filename="merlin", length):
+def csvWrite(streamObj, length, filename="merlin"):
     """Writes the samples of a stream to a CSV file
     Arguments:
         streamObj - a pylsl.StreamInlet object
@@ -47,4 +47,4 @@ for streamInfo in streams:
 
 streamIn = pylsl.StreamInlet(EEGStreamInfo, max_buflen = 360, max_chunklen=0, recover=True)
 streamIn.pull_sample()
-csvWrite(streamIn, "test", 1000)
+csvWrite(streamIn, 1000, "test")
