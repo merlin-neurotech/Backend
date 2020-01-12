@@ -26,7 +26,7 @@ def csvWrite(streamObj, length, filename="merlin"):
     
     with open(os.getcwd() + "\\" + filen, 'w', newline="") as csvFile:
         csvWriter = csv.writer(csvFile)
-        for i in range(0, length-1):
+        for i in range(0, length):
             streamData = streamObj.pull_sample()
             csvWriter.writerow(streamData[0])
 
