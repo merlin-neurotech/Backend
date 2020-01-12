@@ -1,10 +1,18 @@
+"""Demonstration of a function which takes a stream and writes it sample by sample to a CSV file"""
+
 import ble2lsl
 from ble2lsl.devices import muse2016
 import pylsl
 import csv
 import os 
 
-def csvWrite(streamObj, filename, length):
+def csvWrite(streamObj, filename="merlin", length):
+    """Writes the samples of a stream to a CSV file
+    Arguments:
+        streamObj - a pylsl.StreamInlet object
+        filename - the name you would like to give the file, excluding the .csv extension
+        length - how many samples you would like to write. For example a length of 1 would yield 1 sample and 1 line
+    """
     if not isinstance(streamObj, pylsl.StreamInlet):
         raise Exception("Argument streamObj must be a pylsl.StreamInlet object")
     
@@ -24,6 +32,7 @@ def csvWrite(streamObj, filename, length):
 
     csvFile.close()
 
+#Below, the function is demonstrated by creating a dummy streamer and writing 1000 samples to a file
 dummy_streamer = ble2lsl.Dummy(muse2016)
 
 pylslResolvedStreams = pylsl.resolve_streams(wait_time=2.0)
@@ -36,6 +45,6 @@ for streamInfo in streams:
         EEGStreamInfo = streamInfo[2] 
         break
 
-streamIn = pylsl.StreamInlet(EEGStreamInfo,max_buflen = 360, max_chunklen=0,recover=True)
+streamIn = pylsl.StreamInlet(EEGStreamInfo, max_buflen = 360, max_chunklen=0, recover=True)
 streamIn.pull_sample()
 csvWrite(streamIn, "test", 1000)
