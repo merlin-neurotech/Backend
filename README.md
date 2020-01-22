@@ -28,4 +28,4 @@ Take initiative
 
 Stack Overflow is your friend
 
-Figure it out, code!
+Figure it out, code! 
