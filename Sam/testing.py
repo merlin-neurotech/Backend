@@ -10,10 +10,10 @@ import time
 def thread_test():
     streamer = ble2lsl.Dummy(muse2016)
     info = getStream_info(muse2016)
-    functions.plotTimeDomain(info, channels=2, timewin= 15)
+    runFunc(
     streamer.stop()
 
-    
+
 def fft_test(): #dont need a thread as the threading is in the backend (of course)
     stream = ble2lsl.Dummy(muse2016)
     info_ = getStream_info(muse2016)

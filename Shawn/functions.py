@@ -12,6 +12,7 @@ def fft_backend(input_stream, output_stream, window_length=256, pow2=True, windo
 
     #streams = resolve_byprop("name",input_stream.name(),timeout= 10)
     #input_stream = streams[0]
+    print(input_stream.channel_count())
     print(input_stream)
     print(input_stream.name())
     inlet = StreamInlet(input_stream, max_chunklen=12, recover=True)
@@ -19,7 +20,6 @@ def fft_backend(input_stream, output_stream, window_length=256, pow2=True, windo
 
     # Create StreamOutlet to push data to output stream
     outlet = StreamOutlet(output_stream)
-
     ###################################
     ## FFT
     ###################################
@@ -28,9 +28,10 @@ def fft_backend(input_stream, output_stream, window_length=256, pow2=True, windo
     window = window_type(window_length)
     while(True):
         input_chunk = inlet.pull_chunk() # Pull Chunk
-        print(np.shape(input_chunk))
+        #print(np.shape(input_chunk))
 
-        if input_chunk[0]: # Check for available chunk
+        if input_chunk[0] and np.shape(input_chunk)[1] > 0: # Check for available chunk
+            #print("output samples")
             buffer = np.append(buffer, input_chunk[0], axis=0)
 
             if (len(buffer) >= window_length):
@@ -68,6 +69,7 @@ def fft_backend(input_stream, output_stream, window_length=256, pow2=True, windo
                 freq_labels = freq_labels.tolist()
                 output_sample = (psd, freq_labels)
                 print(np.shape(output_sample))
+                print(output_sample)
 
                 # Push fft transform for each channel using outlet
                 #outlet.push_chunk(output_sample)
@@ -218,7 +220,7 @@ def plotTimeDomain(stream_info, chunkwidth=0, fs=0, channels=0, timewin=50, tick
         chunk = inlet.pull_chunk()
 
         # (something is wierd with dummy chunks, get chunks of diff sizes, data comes in too fast)
-        if chunk: # Check for available chunk 
+        if chunk and np.shape(chunk)[1] > 0: # Check for available chunk 
             print(np.shape(chunk))
             chunkdata = np.transpose(chunk[0]) # Get chunk data and transpose to be CHANNELS x CHUNKLENTH
             chunkperiod = len(chunkdata[0])*(1/fs)
