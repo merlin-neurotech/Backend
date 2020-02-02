@@ -47,4 +47,6 @@ for streamInfo in streams:
 
 streamIn = pylsl.StreamInlet(EEGStreamInfo, max_buflen = 360, max_chunklen=0, recover=True)
 streamIn.pull_sample()
+print("writing data")
 csvWrite(streamIn, 1000, "test")
+print("done")
