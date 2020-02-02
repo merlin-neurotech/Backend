@@ -10,8 +10,8 @@ def csvWrite(streamObj, length, filename="merlin"):
     """Writes the samples of a stream to a CSV file
     Arguments:
         streamObj - a pylsl.StreamInlet object
-        filename - the name you would like to give the file, excluding the .csv extension
-        length - how many samples you would like to write. For example a length of 1 would yield 1 sample and 1 line
+        filename - the name you would like to give the file, excluding the .csv extension. Is "merlin.csv" by default
+        length - how many samples you would like to write. A length of 1 would yield 1 sample and 1 line
     """
     if not isinstance(streamObj, pylsl.StreamInlet):
         raise Exception("Argument streamObj must be a pylsl.StreamInlet object")
