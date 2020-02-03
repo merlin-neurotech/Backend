@@ -6,11 +6,13 @@ from ble2lsl.devices import muse2016
 import functions
 from StreamStaff import getStream_info
 import time
+from threads import runFunc
 
 def thread_test():
     streamer = ble2lsl.Dummy(muse2016)
     info = getStream_info(muse2016)
-    runFunc(
+    #runFunc(functions.fft, argsToRun={'input_stream':info, 'output_stream_name':'test'})
+    runFunc(functionToRun=functions.plotTimeDomain, argsToRun={'stream_info':info, 'channels':2, 'timewin':15})
     streamer.stop()
 
 
