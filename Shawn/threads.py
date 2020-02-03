@@ -6,4 +6,4 @@ def runFunc(functionToRun, argsToRun=None):
         func = threading.Thread(target=functionToRun, kwargs=argsToRun)
     else:
         func = threading.Thread(target=functionToRun)
-    func.start()
+    func.run()
