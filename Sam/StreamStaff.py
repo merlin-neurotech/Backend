@@ -9,3 +9,5 @@ def getStream_info(device, max_cnhunk = 0, max_chunkln = 12, stream_type = 'EEG'
 
 
     #threading will also be in this python file 
+
+    

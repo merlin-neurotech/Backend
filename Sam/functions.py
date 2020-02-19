@@ -68,11 +68,11 @@ def fft_backend(input_stream, output_stream, window_length=256, pow2=True, windo
                 psd = psd.tolist()
                 freq_labels = freq_labels.tolist()
                 output_sample = (psd, freq_labels)
-                print(np.shape(output_sample))
-                print(output_sample)
+                #print(np.shape(output_sample))
+                print(output_sample[0])
 
                 # Push fft transform for each channel using outlet
-                #outlet.push_chunk(output_sample)
+                outlet.push_chunk(output_sample)
 
 
 
