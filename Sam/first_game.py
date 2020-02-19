@@ -96,7 +96,12 @@ while True:
         evil_vel = evil_vel*-1.01
     
     if(bulletstate == "fire"):
-        bullet.sety(bullet.ycor() + bull_vel)
+        if(bullet.ycor() > 275):
+            bullet.hideturtle()
+            bulletstate = "ready"
+        else:
+            bullet.sety(bullet.ycor() + bull_vel)
+        
     
 
 delay =  input("press enter to finish")
