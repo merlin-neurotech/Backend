@@ -3,6 +3,8 @@ import numpy as np
 from PyQt5 import QtGui
 from pylsl import StreamInlet, StreamOutlet, StreamInfo, resolve_byprop
 import threading
+import queue
+
 
 def fft_backend(input_stream, output_stream, window_length=256, pow2=True, window_type=np.hamming):
     
@@ -12,25 +14,27 @@ def fft_backend(input_stream, output_stream, window_length=256, pow2=True, windo
 
     #streams = resolve_byprop("name",input_stream.name(),timeout= 10)
     #input_stream = streams[0]
-    print(input_stream)
-    print(input_stream.name())
+    #print(input_stream.channel_count())
+    #print(input_stream)
+    #print(input_stream.name())
     inlet = StreamInlet(input_stream, max_chunklen=12, recover=True)
     inlet.open_stream() # Stream is opened implicitely on first call of pull chunk, but opening now for clarity
 
     # Create StreamOutlet to push data to output stream
-    outlet = StreamOutlet(output_stream)
-
+    outlet = StreamOutlet(output_stream, chunk_size=129)
     ###################################
     ## FFT
     ###################################
     
     buffer = np.empty((0,5))
     window = window_type(window_length)
+    g = True
     while(True):
         input_chunk = inlet.pull_chunk() # Pull Chunk
-        print(np.shape(input_chunk))
+        #print(np.shape(input_chunk))
 
-        if input_chunk[0]: # Check for available chunk
+        if input_chunk[0] and np.shape(input_chunk)[1] > 0: # Check for available chunk
+            #print("output samples")
             buffer = np.append(buffer, input_chunk[0], axis=0)
 
             if (len(buffer) >= window_length):
@@ -65,14 +69,18 @@ def fft_backend(input_stream, output_stream, window_length=256, pow2=True, windo
                 # The second dimension contains the N labels for the frequencies in Hz 
                 psd = np.transpose(psd)
                 psd = psd.tolist()
-                freq_labels = freq_labels.tolist()
-                output_sample = (psd, freq_labels)
-                print(np.shape(output_sample))
+                if(g==True):
+                    #print(psd)
+                    g=False
+
+                #print(np.shape(psd))
+                #freq_labels = freq_labels.tolist()
+                #output_sample = (psd, freq_labels)
+                #print(np.shape(output_sample))
+                #print(output_sample)
 
                 # Push fft transform for each channel using outlet
-                #outlet.push_chunk(output_sample)
-
-
+                outlet.push_chunk(psd)
 
 def fft(input_stream, output_stream_name='default', window_length=256, pow2=True, window_type=np.hamming, channels=0):
 
@@ -100,19 +108,17 @@ def fft(input_stream, output_stream_name='default', window_length=256, pow2=True
     ## Create Thread to Run fft_backend
     ####################################
     #fft_backend(input_stream, output_stream)
-
     # Currently if you run function in a diff thread it does not work
     thread = threading.Thread(target=fft_backend, 
         kwargs=dict(input_stream=input_stream, 
-            output_stream=output_stream, 
+            output_stream=output_stream,
             window_length=window_length, 
             pow2=pow2,
             window_type=window_type))
 
     thread.start()
 
-    return output_stream
-
+    return output_stream, queue
 
 def plotTimeDomain(stream_info, chunkwidth=0, fs=0, channels=0, timewin=50, tickfactor=5, size=(1500, 800), title=None):
     """Plot Real-Time domain in the time domain using a scrolling plot.
@@ -218,7 +224,7 @@ def plotTimeDomain(stream_info, chunkwidth=0, fs=0, channels=0, timewin=50, tick
         chunk = inlet.pull_chunk()
 
         # (something is wierd with dummy chunks, get chunks of diff sizes, data comes in too fast)
-        if chunk: # Check for available chunk 
+        if chunk and np.shape(chunk)[1] > 0: # Check for available chunk 
             print(np.shape(chunk))
             chunkdata = np.transpose(chunk[0]) # Get chunk data and transpose to be CHANNELS x CHUNKLENTH
             chunkperiod = len(chunkdata[0])*(1/fs)
@@ -258,7 +264,6 @@ def plotTimeDomain(stream_info, chunkwidth=0, fs=0, channels=0, timewin=50, tick
     inlet.close_stream()
     
     return True
-
 
 def plotFreqDomain(stream_info, chunkwidth, channels=0, size=(1500, 1500), title=None):
     """Plot Real-Time in the frequency domain using a static x-axis and changing y axis values.
@@ -334,18 +339,31 @@ def plotFreqDomain(stream_info, chunkwidth, channels=0, size=(1500, 1500), title
     ###################################
 
     firstUpdate = True
+    buffer = []
     while(True):
         chunk = inlet.pull_chunk()
+        #print(np.shape(chunk[0]))
+        #print(chunk[0][0:129])
+        #print(np.shape(chunk[0][0:129]))
 
-        if np.shape(chunk) == (2, chunkwidth): # Check for available chunk
+        if not (np.size(chunk[0]) == 0): # Check for available chunk
             chunkdata = np.transpose(chunk[0]) # Get chunk data and transpose to be CHANNELS x CHUNKLENGTH
-
+            if np.size(buffer) == 0:
+                buffer = chunkdata
+            else:
+                buffer = np.append(buffer, chunkdata, axis=1)
+        
+        while np.size(buffer,1) > 129:
+            data = buffer[:,0:129]
+            buffer = buffer[:,129:]
+            #if np.size(buffer,1) < 129:
+                #data = np.zeros((5,129))
             # Update plotted data
             for i in range(0,channels):
-                curves[i].setData(x_vec, chunkdata[i]) # Update data
-               
-        # Update QT Widget to reflect the changes we made
-        pg.QtGui.QApplication.processEvents()
+                curves[i].setData(x_vec, data[i]) # Update data
+            
+            # Update QT Widget to reflect the changes we made
+            pg.QtGui.QApplication.processEvents()
 
         # Check to see if widget if has been closed, if so exit loop
         if not fig.isVisible():
