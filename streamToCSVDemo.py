@@ -23,13 +23,18 @@ def csvWrite(streamObj, length, filename="merlin"):
     
     if length <= 0:
         raise Exception("File length cannot be less than or equal to zero")
+        
+    try:
+        with open(os.getcwd() + "\\" + filen, 'w', newline="") as csvFile:
+            csvWriter = csv.writer(csvFile)
+            for i in range(0, length):
+                streamData = streamObj.pull_sample()
+                csvWriter.writerow(streamData[0])
+    except OSError:
+        raise Exception("File could not be written. Does the filename contain illegal characters?")
+    except:
+        raise Exception("Unable to write file")
     
-    with open(os.getcwd() + "\\" + filen, 'w', newline="") as csvFile:
-        csvWriter = csv.writer(csvFile)
-        for i in range(0, length):
-            streamData = streamObj.pull_sample()
-            csvWriter.writerow(streamData[0])
-
     csvFile.close()
 
 #Below, the function is demonstrated by creating a dummy streamer and writing 1000 samples to a file
@@ -48,5 +53,5 @@ for streamInfo in streams:
 streamIn = pylsl.StreamInlet(EEGStreamInfo, max_buflen = 360, max_chunklen=0, recover=True)
 streamIn.pull_sample()
 print("writing data")
-csvWrite(streamIn, 1000, "test")
+csvWrite(streamIn, 1000, "**")
 print("done")
